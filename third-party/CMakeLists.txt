@@ -57,7 +57,7 @@ endif()
 # HOST system, when not crosscompiling these should be the
 # same as DEPS_*. Except when targeting UNIX in which case
 # want all the dependencies to use the same compiler.
-if(CMAKE_CROSSCOMPILING AND NOT UNIX)
+if((CMAKE_CROSSCOMPILING AND NOT UNIX) OR ARM_CROSS)
   set(HOSTDEPS_INSTALL_DIR "${CMAKE_BINARY_DIR}/host")
   set(HOSTDEPS_BIN_DIR "${HOSTDEPS_INSTALL_DIR}/bin")
   set(HOSTDEPS_LIB_DIR "${HOSTDEPS_INSTALL_DIR}/lib")

@@ -44,11 +44,11 @@ set(INSTALLCMD_UNIX ${MAKE_PRG} CFLAGS=-fPIC
                                 Q=
                                 install)
 
-if(UNIX)
+if(UNIX AND NOT ARM_CROSS)
   BuildLuaJit(INSTALL_COMMAND ${INSTALLCMD_UNIX}
     CC=${DEPS_C_COMPILER} PREFIX=${DEPS_INSTALL_DIR})
 
-elseif(MINGW AND CMAKE_CROSSCOMPILING)
+elseif((MINGW AND CMAKE_CROSSCOMPILING))
 
   # Build luajit for the host
   BuildLuaJit(TARGET luajit_host
@@ -70,6 +70,22 @@ elseif(MINGW AND CMAKE_CROSSCOMPILING)
         FILE_T=luajit.exe
         Q=
         INSTALL_TSYMNAME=luajit.exe)
+
+elseif(ARM_CROSS)
+  BuildLuaJit(TARGET luajit_host
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ${INSTALLCMD_UNIX}
+      CC=${HOST_C_COMPILER} PREFIX=${HOSTDEPS_INSTALL_DIR})
+
+  BuildLuaJit(
+    INSTALL_COMMAND
+      ${MAKE_PRG} PREFIX=${DEPS_INSTALL_DIR}
+        BUILDMODE=static install
+        TARGET_SYS=${CMAKE_SYSTEM_NAME}
+        CROSS=${CROSS_TARGET}-
+        HOST_CC=${HOST_C_COMPILER} HOST_CFLAGS=${HOST_C_FLAGS}
+        HOST_LDFLAGS=${HOST_EXE_LINKER_FLAGS})
 
 elseif(WIN32 AND MSVC)
 

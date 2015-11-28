@@ -40,12 +40,12 @@ set(UNIX_CFGCMD sh ${DEPS_BUILD_DIR}/src/libuv/autogen.sh &&
   --prefix=${DEPS_INSTALL_DIR} --libdir=${DEPS_INSTALL_DIR}/lib
   CC=${DEPS_C_COMPILER})
 
-if(UNIX)
+if(UNIX AND NOT ARM_CROSS)
   BuildLibUv(
     CONFIGURE_COMMAND ${UNIX_CFGCMD}
     INSTALL_COMMAND ${MAKE_PRG} V=1 install)
 
-elseif(MINGW AND CMAKE_CROSSCOMPILING)
+elseif((MINGW AND CMAKE_CROSSCOMPILING) OR ARM_CROSS)
   # Build libuv for the host
   BuildLibUv(TARGET libuv_host
     CONFIGURE_COMMAND sh ${DEPS_BUILD_DIR}/src/libuv_host/autogen.sh && ${DEPS_BUILD_DIR}/src/libuv_host/configure --with-pic --disable-shared --prefix=${HOSTDEPS_INSTALL_DIR} CC=${HOST_C_COMPILER}

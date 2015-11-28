@@ -3,6 +3,10 @@ if(WIN32)
   return()
 endif()
 
+if(ARM_CROSS)
+    set(CONFIGURE_HOST_FLAG "--host=${CROSS_TARGET}")
+endif()
+
 ExternalProject_Add(jemalloc
   PREFIX ${DEPS_BUILD_DIR}
   URL ${JEMALLOC_URL}
@@ -17,7 +21,7 @@ ExternalProject_Add(jemalloc
     -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/DownloadAndExtractFile.cmake
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ${DEPS_BUILD_DIR}/src/jemalloc/configure
-     CC=${DEPS_C_COMPILER} --prefix=${DEPS_INSTALL_DIR}
+    CC=${DEPS_C_COMPILER} --prefix=${DEPS_INSTALL_DIR} ${CONFIGURE_HOST_FLAG}
   BUILD_COMMAND ""
   INSTALL_COMMAND ${MAKE_PRG} install_include install_lib)
 
