@@ -3257,6 +3257,9 @@ static int showmatches(expand_T *xp, int wildmenu)
     else {
       /* compute the number of columns and lines for the listing */
       maxlen += 2;          /* two spaces between file names */
+      if (xp->xp_context == EXPAND_BOOL_SETTINGS) {
+          maxlen += 2;
+      }
       columns = ((int)Columns + 2) / maxlen;
       if (columns < 1)
         columns = 1;
@@ -3318,7 +3321,17 @@ static int showmatches(expand_T *xp, int wildmenu)
           j = FALSE;
           p = L_SHOWFILE(k);
         }
-        lastlen = msg_outtrans_attr(p, j ? attr : 0);
+
+        lastlen = 0;
+        if (xp->xp_context == EXPAND_BOOL_SETTINGS) {
+            long boolval;
+            if (get_option_value(p, &boolval, NULL, 0) == 1 && boolval != 0) {
+                lastlen = msg_outtrans_attr("✓ ", j ? attr : 0);
+            } else {
+                lastlen = msg_outtrans_attr("  ", j ? attr : 0);
+            }
+        }
+        lastlen += msg_outtrans_attr(p, j ? attr : 0);
       }
       if (msg_col > 0) {        /* when not wrapped around */
         msg_clr_eos();
